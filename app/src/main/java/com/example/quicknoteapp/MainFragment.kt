@@ -2,9 +2,7 @@ package com.example.quicknoteapp
 
 import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -25,6 +23,7 @@ class MainFragment : Fragment(), NotesListAdapter.ListItemListener {
         savedInstanceState: Bundle?
     ): View? {
         (activity as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(false)
+        setHasOptionsMenu(true)
 
         binding = MainFragmentBinding.inflate(inflater, container, false)
         viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
@@ -37,8 +36,7 @@ class MainFragment : Fragment(), NotesListAdapter.ListItemListener {
             addItemDecoration(divider)
         }
 
-        viewModel.notesList.observe(viewLifecycleOwner, Observer {
-//            Log.i("noteLogging", it.toString())
+        viewModel.notesList?.observe(viewLifecycleOwner, Observer {
             adapter = NotesListAdapter(it, this@MainFragment)
             binding.recyclerView.adapter = adapter
             binding.recyclerView.layoutManager = LinearLayoutManager(activity)
@@ -47,10 +45,27 @@ class MainFragment : Fragment(), NotesListAdapter.ListItemListener {
         return binding.root
     }
 
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.menu_main, menu)
+        super.onCreateOptionsMenu(menu, inflater)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.action_sample_data -> addSampleData()
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
+
     override fun onItemClick(noteId: Int) {
         Log.i("noteLogging", "onItemClick: $noteId")
         val action = MainFragmentDirections.actionEditNote(noteId)
         findNavController().navigate(action)
+    }
+
+    private fun addSampleData(): Boolean {
+        viewModel.addSampleData()
+        return true
     }
 
 }

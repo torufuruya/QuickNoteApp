@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">QuickNoteApp</string>
     <string name="enter_note">Enter notes</string>
+    <string name="add_sample_data">Add sample data</string>
 </resources>
