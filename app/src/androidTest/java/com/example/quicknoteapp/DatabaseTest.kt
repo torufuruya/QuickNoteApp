@@ -47,4 +47,13 @@ class DatabaseTest {
         val savedNote = dao.getNoteById(1)
         assertEquals(savedNote?.id ?: 0, 1)
     }
+
+    @Test
+    fun deleteAll() {
+        dao.insertAll(SampleDataProvider.getNotes())
+        assertEquals(dao.getCount(), SampleDataProvider.getNotes().size)
+
+        dao.deleteAll()
+        assertEquals(dao.getCount(), 0)
+    }
 }

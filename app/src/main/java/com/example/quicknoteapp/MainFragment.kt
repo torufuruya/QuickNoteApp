@@ -1,6 +1,8 @@
 package com.example.quicknoteapp
 
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.*
 import androidx.appcompat.app.AppCompatActivity
@@ -46,13 +48,20 @@ class MainFragment : Fragment(), NotesListAdapter.ListItemListener {
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.menu_main, menu)
+        val menuId = if (this::adapter.isInitialized && adapter.selectedNotes.isNotEmpty()) {
+            R.menu.menu_main_selected_item
+        } else {
+            R.menu.menu_main
+        }
+        inflater.inflate(menuId, menu)
         super.onCreateOptionsMenu(menu, inflater)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.action_sample_data -> addSampleData()
+            R.id.action_delete -> deleteSelectedNotes()
+            R.id.action_delete_all -> deleteAllNotes()
             else -> super.onOptionsItemSelected(item)
         }
     }
@@ -63,9 +72,26 @@ class MainFragment : Fragment(), NotesListAdapter.ListItemListener {
         findNavController().navigate(action)
     }
 
+    override fun onItemSelectionChanged() {
+        requireActivity().invalidateOptionsMenu()
+    }
+
     private fun addSampleData(): Boolean {
         viewModel.addSampleData()
         return true
     }
 
+    private fun deleteSelectedNotes(): Boolean {
+        viewModel.deleteNotes(adapter.selectedNotes)
+        Handler(Looper.getMainLooper()).postDelayed({
+            adapter.selectedNotes.clear()
+            requireActivity().invalidateOptionsMenu()
+        }, 100)
+        return true
+    }
+
+    private fun deleteAllNotes(): Boolean {
+        viewModel.deleteAllNotes()
+        return true
+    }
 }
