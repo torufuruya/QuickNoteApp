@@ -3,7 +3,6 @@ package com.example.quicknoteapp
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import android.view.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
@@ -12,6 +11,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.quicknoteapp.data.NEW_NOTE_ID
 import com.example.quicknoteapp.databinding.MainFragmentBinding
 
 class MainFragment : Fragment(), NotesListAdapter.ListItemListener {
@@ -26,6 +26,8 @@ class MainFragment : Fragment(), NotesListAdapter.ListItemListener {
     ): View? {
         (activity as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(false)
         setHasOptionsMenu(true)
+
+        requireActivity().title = getString(R.string.app_name)
 
         binding = MainFragmentBinding.inflate(inflater, container, false)
         viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
@@ -43,6 +45,10 @@ class MainFragment : Fragment(), NotesListAdapter.ListItemListener {
             binding.recyclerView.adapter = adapter
             binding.recyclerView.layoutManager = LinearLayoutManager(activity)
         })
+
+        binding.newButton.setOnClickListener {
+            editNote(NEW_NOTE_ID)
+        }
 
         return binding.root
     }
@@ -66,8 +72,7 @@ class MainFragment : Fragment(), NotesListAdapter.ListItemListener {
         }
     }
 
-    override fun onItemClick(noteId: Int) {
-        Log.i("noteLogging", "onItemClick: $noteId")
+    override fun editNote(noteId: Int) {
         val action = MainFragmentDirections.actionEditNote(noteId)
         findNavController().navigate(action)
     }

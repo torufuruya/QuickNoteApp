@@ -30,7 +30,7 @@ class NotesListAdapter(
         with(holder.binding) {
             noteText.text = note.text
             root.setOnClickListener {
-                listener.onItemClick(note.id)
+                listener.editNote(note.id)
             }
             floatingActionButton.setOnClickListener {
                 if (selectedNotes.contains(note)) {
@@ -55,7 +55,7 @@ class NotesListAdapter(
     override fun getItemCount(): Int = notesList.size
 
     interface ListItemListener {
-        fun onItemClick(noteId: Int)
+        fun editNote(noteId: Int)
         fun onItemSelectionChanged()
     }
 }

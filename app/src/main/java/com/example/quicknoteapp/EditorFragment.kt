@@ -15,6 +15,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import com.example.quicknoteapp.data.NEW_NOTE_ID
 import com.example.quicknoteapp.databinding.EditorFragmentBinding
 
 class EditorFragment : Fragment() {
@@ -34,6 +35,12 @@ class EditorFragment : Fragment() {
             it.setHomeAsUpIndicator(R.drawable.ic_check)
         }
         setHasOptionsMenu(true)
+
+        requireActivity().title = if (args.noteId == NEW_NOTE_ID) {
+            getString(R.string.new_note)
+        } else {
+            getString(R.string.edit_note)
+        }
 
         viewModel = ViewModelProvider(this).get(EditorViewModel::class.java)
         binding = EditorFragmentBinding.inflate(inflater, container, false)

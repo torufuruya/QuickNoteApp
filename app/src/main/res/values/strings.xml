@@ -1,7 +1,9 @@
 <resources>
-    <string name="app_name">QuickNoteApp</string>
+    <string name="app_name">Quick Note</string>
     <string name="enter_note">Enter notes</string>
     <string name="add_sample_data">Add sample data</string>
     <string name="delete">Delete</string>
     <string name="delete_all_notes">Delete all notes</string>
+    <string name="new_note">New Note</string>
+    <string name="edit_note">Edit Note</string>
 </resources>
