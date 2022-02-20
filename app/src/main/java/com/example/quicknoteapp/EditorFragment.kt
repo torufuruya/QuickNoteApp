@@ -1,14 +1,17 @@
 package com.example.quicknoteapp
 
+import android.app.Activity
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -34,7 +37,7 @@ class EditorFragment : Fragment() {
 
         viewModel = ViewModelProvider(this).get(EditorViewModel::class.java)
         binding = EditorFragmentBinding.inflate(inflater, container, false)
-        binding.editor.setText("You selected note number ${args.noteId}")
+        binding.editor.setText("")
 
         // Enable to save and return also when hardware back key used
         requireActivity().onBackPressedDispatcher.addCallback(
@@ -45,6 +48,11 @@ class EditorFragment : Fragment() {
                 }
             }
         )
+
+        viewModel.currentNote.observe(viewLifecycleOwner, Observer {
+            binding.editor.setText(it?.text)
+        })
+        viewModel.getNoteById(args.noteId)
 
         return binding.root
     }
@@ -57,8 +65,13 @@ class EditorFragment : Fragment() {
     }
 
     private fun saveAndReturn(): Boolean {
-        Log.i("noteLogging", "saveAndReturn: called")
-        // TODO: Save the new data
+        val imm =
+            requireActivity().getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(binding.root.windowToken, 0)
+
+        viewModel.currentNote.value?.text = binding.editor.text.toString()
+        viewModel.updateNote()
+
         findNavController().navigateUp()
         return true
     }
